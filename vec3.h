@@ -54,14 +54,12 @@ public:
 
     static vec3 random() {
         return vec3(random_double(), random_double(), random_double());
-    }
+     }
 
     static vec3 random(double min, double max) {
-        return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+        return vec3(random_double(min, max), random_double(min, max), random_double(min,max));
     }
 };
-
-
 //an alias for vec3, useful for geometric clarity
 using point3 = vec3;
 
@@ -109,5 +107,25 @@ inline vec3 cross(const vec3& u, const vec3& v) {
 
 inline vec3 unit_vector(const vec3& v) {
     return v / v.length();
+}
+
+inline vec3 random_unit_vector() {
+    while (true) {
+        auto p = vec3::random(-1, 1);
+        auto length_sq = p.length_squared();
+        if (length_sq < 1) {
+            return p / std::sqrt(length_sq);
+        }
+    }
+}
+
+inline vec3 random_on_hemisphere(const vec3& normal) {
+    auto rand_u_vec = random_unit_vector();
+    if (dot(normal, rand_u_vec) > 0) {
+        return rand_u_vec;
+    }
+
+    else
+        return -rand_u_vec;
 }
 #endif //VEC3_H
