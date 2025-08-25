@@ -19,9 +19,9 @@ inline void write_color(std::ostream& out, const color& pixel_color) {
     //normalize values, [0,1] to [0,255]
     static const interval intensity(0.000, 0.999);
     //std::cerr << intensity.clamp(r) << intensity.clamp(b) << '\n';
-    int rbyte = int(255.999 * r);
-    int gbyte = int(255 * intensity.clamp(g));
-    int bbyte = int(255 * intensity.clamp(b));
+    int rbyte = int(256 * intensity.clamp(r));
+    int gbyte = int(256 * intensity.clamp(g));
+    int bbyte = int(256 * intensity.clamp(b));
 
     // write oue pixels
     out << rbyte << ' ' << gbyte << ' ' << bbyte << '\n';
