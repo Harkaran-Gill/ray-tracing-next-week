@@ -1,0 +1,7 @@
+#Clion Specifics
+.idea/
+cmake-build-debug/
+
+#rendered test images
+image.ppm
+RayTracedImages/
