@@ -2,6 +2,10 @@
 .idea/
 cmake-build-debug/
 
+# Visual Studio Specifics
+.vs/
+out/
+
 #rendered test images
 image.ppm
 RayTracedImages/
