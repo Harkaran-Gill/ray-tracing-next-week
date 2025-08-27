@@ -9,7 +9,6 @@
 color ray_color (const ray& r, const hittable& world) {
     hit_record rec;
     if (world.hit(r, interval(0, infinity), rec)){
-        //std::clog << "Normal: " << rec.normal << '\n;
         return 0.5 * (rec.normal + color(1.0, 1.0, 1.0));
     }
 
@@ -31,9 +30,10 @@ int main() {
     camera cam;
 
     cam.aspect_ratio = 16.0 / 9.0;
-    cam.image_width = 800;
+    cam.image_width = 500;
 
     cam.samples_per_pixel = 100;
+    cam.max_depth = 50;
 
     cam.render(world);
 }

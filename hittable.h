@@ -7,11 +7,12 @@
 
 class hit_record {
 public:
-    point3 p;
-    vec3 normal;
-    double t;
-    bool front_face;
+    point3 p;           // The point where the ray hits
+    vec3 normal;        // Surface normal of the point where the ray hit
+    double t;           // The root of the function of ray, since ray is just a line
+    bool front_face;    // Storing if the ray is facing inwards or outwards
 
+    //
     void set_face_normal(const ray& r, const vec3& outward_normal) {
         //sets the hit record normal vector
         //outward normal is assumed to be of unit length

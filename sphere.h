@@ -13,7 +13,7 @@ public:
 
     //This function is called by the hit function of the "hittable_list" class
     bool hit (const ray& r, interval ray_t, hit_record& rec) const override{
-        vec3 oc = center - r.origin();
+        vec3 oc = center - r.origin();                      // Ray origin to Sphere center
         auto a = r.direction().length_squared();
         auto h = dot(r.direction(), oc);
         auto c = oc.length_squared() - radius*radius;
