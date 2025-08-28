@@ -6,6 +6,7 @@
 #define CAMERA_H
 
 #include "hittable.h"
+#include "material.h"
 #include "rt.h"
 
 class camera {
@@ -39,7 +40,7 @@ private:
     int image_height;               // Rendered image height
     double pixel_samples_scale;     // Color scale factor for sum of pixel samples
     point3 camera_center;           // Camera center
-    point3 pixel00_loc;             // Center point location of the upper most left pixel
+    point3 pixel00_loc;             // Center point location of the uppermost left pixel
     vec3 pixel_delta_u;             // Offset of pixel to the right
     vec3 pixel_delta_v;             // Offset of pixel below
 
@@ -91,7 +92,7 @@ private:
 
     }
 
-    // TODO: implement a non square version to experiment with non-square pixels
+    // TODO: implement a non-square version to experiment with non-square pixels
     vec3 sample_square() {
         // Returns the vector to a random point in the [-0.5, -0.5] - [0.5, 0.5] unit square
         return vec3(random_double() - 0.5, random_double() - 0.5, 0);
@@ -107,8 +108,12 @@ private:
 
         hit_record rec;
         if (world.hit(r, interval(0.001, infinity),rec)) {
-            vec3 direction = rec.normal + random_unit_vector();
-            return 0.5 * ray_color(ray(rec.p, direction), --depth, world);
+            ray scattered;
+            color attenuation;
+            if (rec.mat->scatter(r, rec, attenuation, scattered)) {
+                return attenuation * ray_color(scattered, depth-1, world);
+            }
+            return color(0, 0, 0);
         }
 
         //calculating the background gradient

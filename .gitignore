@@ -9,3 +9,7 @@ out/
 #rendered test images
 image.ppm
 RayTracedImages/
+
+# file conversion script
+convert.py
+.venv/
