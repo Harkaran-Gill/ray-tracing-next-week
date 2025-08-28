@@ -69,9 +69,23 @@ public:
         double ri = rec.front_face ? (1.0/refraction_index) : refraction_index;
 
         vec3 unit_direction =  unit_vector((ray_in.direction()));
-        vec3 refracted = refract(unit_direction, rec.normal, ri);
 
-        scattered = ray(rec.p, refracted);
+        double cos_theta = std::fmin(dot(-unit_direction, rec.normal), 1.0);
+        double sin_theta = std::sqrt(1 - cos_theta * cos_theta);
+
+        bool cannot_refract = ri * sin_theta > 1.0;
+
+        vec3 direction;
+        // We use reflectance > random_double() since, practically light is only partially reflected
+        // so we use probability to approximate light behaviour here
+        if (cannot_refract ) {
+            direction = reflect(unit_direction, rec.normal);
+        }
+        else {
+            direction = refract(unit_direction, rec.normal, ri);
+        }
+
+        scattered = ray(rec.p, direction);
         return true;
     }
 
@@ -80,6 +94,14 @@ private:
     // Refractive index in vacuum or air, or the ratio of the material's refractive index over
     // the refractive index of the enclosing media
     double refraction_index;
+
+    // Schlick's approximation for reflectance
+    static double reflectance(double cosine, double refraction_index) {
+        // r0 is reflectance at viewing angle parallel to normal
+        auto r0 = (1 - refraction_index) / (1 + refraction_index);
+        r0 = r0*r0;
+        return r0 + (1-r0)*std::pow((1-cosine), 5);     // interpolate between 0-1
+    }
 };
 
 
