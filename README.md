@@ -22,9 +22,9 @@ This program generates photorealistic images by simulating the path of light ray
 - [x] Surface normals and shading
 - [x] Hittable objects and lists
 - [x] **Anti-aliasing** using multisampling
-- [ ] Diffuse (Lambertian) materials
-- [ ] Metal materials with reflection
-- [ ] Dielectric materials with refraction (glass, water)
+- [x] Diffuse (Lambertian) materials
+- [x] Metal materials with reflection
+- [x] Dielectric materials with refraction (glass, water)
 - [ ] Positionable camera with depth of field
 - [ ] Bounding Volume Hierarchy (BVH) for performance optimization
 
@@ -38,12 +38,9 @@ To build and run this project, you will need:
 - [Git](https://git-scm.com/downloads)
 - Your preferred Code-Editor
 
-<!-- =================================================================== -->
-<!--    OPTIONAL: If you used other libraries, add them here.           -->
-<!-- =================================================================== -->
-<!-- For example:                                                     -->
-<!-- - [SDL2](https://www.libsdl.org/) for real-time window display    -->
-<!-- =================================================================== -->
+For [feature/sdl2-realtime-viewer](https://github.com/Harkaran-Gill/RayTracer/tree/feature/sdl2-realtime-viewer), you will additionally need the following:  
+- [SDL2](https://www.libsdl.org/) for real-time window display
+
 
 ### Building the Project
 
