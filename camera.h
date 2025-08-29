@@ -5,6 +5,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <SDL.h>
 #include "hittable.h"
 #include "material.h"
 #include "rt.h"
@@ -16,7 +17,7 @@ public:
     int samples_per_pixel = 10;
     int max_depth = 10;
 
-    void render(const hittable& world){
+    bool render(const hittable& world, SDL_Renderer *renderer, SDL_Texture *texture){
         initialize();
 
         //Render
@@ -30,24 +31,44 @@ public:
                     ray r = get_ray(i, j);
                     pixel_color += ray_color(r, max_depth, world);
                 }
-                write_color(std::cout, pixel_samples_scale * pixel_color);
+                write_color(pixel_samples_scale * pixel_color, pixels, j, i, image_width);
             }
+            SDL_UpdateTexture(texture, nullptr, pixels.data(), image_width*3 );
+            SDL_RenderClear(renderer);
+            SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+            SDL_RenderPresent(renderer);
+
+            // Process events
+            while (SDL_PollEvent(&event)) {
+                if (event.type == SDL_QUIT) {
+                    return true;
+                }
+                else if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    return true;
+                }
+            }
+
+
         }
         std::clog << "\rDone!                           " << image_height << '\n';
+        return false;
     }
 
 private:
-    int image_height;               // Rendered image height
+    int image_height;                // Rendered image height
     double pixel_samples_scale;     // Color scale factor for sum of pixel samples
     point3 camera_center;           // Camera center
     point3 pixel00_loc;             // Center point location of the uppermost left pixel
     vec3 pixel_delta_u;             // Offset of pixel to the right
     vec3 pixel_delta_v;             // Offset of pixel below
+    std::vector<uint8_t> pixels;
+    SDL_Event event;
 
     void initialize() {
         //calculate the height of the image, and set = 1, if less than 1
         image_height = int(image_width / aspect_ratio);
         image_height = (image_height < 1) ? 1 : image_height;
+        pixels.resize(image_width * image_height * 3);
 
         pixel_samples_scale = 1.0 / samples_per_pixel;
 
@@ -88,7 +109,6 @@ private:
         auto ray_direction = pixel_sample - ray_origin;
 
         return ray(ray_origin, ray_direction);
-
 
     }
 

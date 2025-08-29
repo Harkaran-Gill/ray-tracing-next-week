@@ -4,9 +4,55 @@
 #include "hittable.h"
 #include "hittable_list.h"
 #include "material.h"
+#include <SDL.h>
 #include "sphere.h"
 
+SDL_Window *window;
+SDL_Renderer *renderer;
+SDL_Texture *texture;
+SDL_Event event;
 
+void initialize_sdl(int width) {
+
+    int height = static_cast<int>(width*9.0/16.0);
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+        std::cerr << "Unable to Intialize anything" << std::endl;
+    }
+
+    // TODO: Check width !> window size
+
+    window = SDL_CreateWindow("Ray Tracer",
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        width,
+        height,
+        SDL_WINDOW_SHOWN);
+
+    if (!window) {
+        std::cerr << "Unable to initialize window" << std::endl;
+    }
+
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    if (!renderer) {
+        std::cerr << "Unable to initialize renderer" << std::endl;
+    }
+
+    texture = SDL_CreateTexture(renderer,
+        SDL_PIXELFORMAT_RGB24,
+        SDL_TEXTUREACCESS_STREAMING,
+        width, height);
+    if (!texture) {
+        std::cerr << "Unable to initialize texture" << std::endl;
+    }
+}
+
+
+void destroy(){
+    SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+}
 int main() {
     //set the world
     hittable_list world;
@@ -31,5 +77,24 @@ int main() {
     cam.samples_per_pixel = 100;
     cam.max_depth = 50;
 
-    cam.render(world);
+    initialize_sdl(cam.image_width);
+    bool exit = cam.render(world, renderer, texture);
+    if (exit) {
+        destroy();
+        return 0;
+    }
+    while (!exit) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                destroy();
+                exit = true;
+            }
+            if (event.key.keysym.sym == SDLK_ESCAPE) {
+                destroy();
+                exit = true;
+            }
+        }
+        SDL_Delay(50);
+    }
+    return 0;
 }

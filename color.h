@@ -18,7 +18,7 @@ inline double linear_to_gamma(double linear_component) {
     return 0;
 }
 
-inline void write_color(std::ostream& out, const color& pixel_color) {
+inline void write_color(const color& pixel_color, std::vector<uint8_t>& pixels, int j, int i, int width) {
     auto r = pixel_color.x();
     auto g = pixel_color.y();
     auto b = pixel_color.z();
@@ -34,8 +34,11 @@ inline void write_color(std::ostream& out, const color& pixel_color) {
     int gbyte = int(256 * intensity.clamp(g));
     int bbyte = int(256 * intensity.clamp(b));
 
-    // write oue pixels
-    out << rbyte << ' ' << gbyte << ' ' << bbyte << '\n';
+    // write out pixels
+    //out << rbyte << ' ' << gbyte << ' ' << bbyte << '\n';
+    pixels[(j * width + i) * 3 + 0] = rbyte;
+    pixels[(j * width + i) * 3 + 1] = gbyte;
+    pixels[(j * width + i) * 3 + 2] = bbyte;
 }
 
 #endif //COLOR_H
