@@ -10,6 +10,5 @@ out/
 image.ppm
 RayTracedImages/
 
-# file conversion script
-convert.py
+# python virtual env
 .venv/
