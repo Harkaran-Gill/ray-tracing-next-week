@@ -1,6 +1,8 @@
 #Clion Specifics
 .idea/
 cmake-build-debug/
+cmake-build-release/
+cmake-build-release-visual-studio/
 
 # Visual Studio Specifics
 .vs/
