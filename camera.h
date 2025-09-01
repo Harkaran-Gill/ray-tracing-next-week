@@ -13,7 +13,7 @@
 class camera {
 public:
     double aspect_ratio     = 1.0;      // Ratio of image width over height
-    int image_width         = 100;      // Width of Rendered image in pixels
+    int render_width         = 100;      // Width of Rendered image in pixels
     int samples_per_pixel   = 10;       // Number random samples for each pixel
     int max_depth           = 10;       // Maximum number of ray bounces in row
 
@@ -27,21 +27,23 @@ public:
 
     bool render(const hittable& world, SDL_Renderer *renderer, SDL_Texture *texture){
         initialize();
-
+        int time_start = SDL_GetTicks();
         //Render
-        std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
+        std::cout << "P3\n" << render_width << " " << render_height << "\n255\n";
 
-        for (int j = 0; j < image_height; ++j) {
-            std::clog << "\rScanLines remaining: " << image_height - j << ' '<<std::flush;
-            for (int i = 0; i < image_width; ++i) {
+        for (int j = 0; j < render_height; ++j) {
+            std::clog << "\rScanLines remaining: " << render_height - j << ' '<<std::flush;
+            for (int i = 0; i < render_width; ++i) {
                 color pixel_color = color (0, 0, 0);
                 for (int samples = 0; samples < samples_per_pixel; ++samples) {
                     ray r = get_ray(i, j);
                     pixel_color += ray_color(r, max_depth, world);
                 }
-                write_color(pixel_samples_scale * pixel_color, pixels, j, i, image_width);
+                write_color(pixel_samples_scale * pixel_color, pixels, j, i, render_width);
             }
-            SDL_UpdateTexture(texture, nullptr, pixels.data(), image_width*3 );
+
+
+            SDL_UpdateTexture(texture, nullptr, pixels.data(), render_width*3 );
             SDL_RenderClear(renderer);
             SDL_RenderCopy(renderer, texture, nullptr, nullptr);
             SDL_RenderPresent(renderer);
@@ -55,15 +57,14 @@ public:
                     return true;
                 }
             }
-
-
         }
-        std::clog << "\rDone!                           " << image_height << '\n';
+        int time_end = SDL_GetTicks();
+        std::clog << "\rDone!  "<< (time_end - time_start)/1000.0<< "               " << render_height << '\n';
         return false;
     }
 
 private:
-    int image_height;                // Rendered image height
+    int render_height;                // Rendered image height
     double pixel_samples_scale;     // Color scale factor for sum of pixel samples
     point3 camera_center;           // Camera center
     point3 pixel00_loc;             // Center point location of the uppermost left pixel
@@ -77,9 +78,9 @@ private:
 
     void initialize() {
         //calculate the height of the image, and set = 1, if less than 1
-        image_height = int(image_width / aspect_ratio);
-        image_height = (image_height < 1) ? 1 : image_height;
-        pixels.resize(image_width * image_height * 3);
+        render_height = int(render_width / aspect_ratio);
+        render_height = (render_height < 1) ? 1 : render_height;
+        pixels.resize(render_width * render_height * 3);
 
         pixel_samples_scale = 1.0 / samples_per_pixel;
 
@@ -94,7 +95,7 @@ private:
         auto theta =  degrees_to_radians(vfov);
         auto h = std::tan(theta/2);
         auto viewport_height = 2.0 * h * focus_dist;        // 2 is arbitrary height
-        auto viewport_width  = viewport_height * (double(image_width) / image_height);
+        auto viewport_width  = viewport_height * (double(render_width) / render_height);
 
         // Calculate u, v, w unit basis vectors for the camera coordinate frame
         w = unit_vector(lookfrom - lookat);
@@ -106,8 +107,8 @@ private:
         auto viewport_v = viewport_height * -v;
 
         //calculate individual pixel height and width i.e delta u & v
-        pixel_delta_u = viewport_u / image_width;
-        pixel_delta_v = viewport_v / image_height;
+        pixel_delta_u = viewport_u / render_width;
+        pixel_delta_v = viewport_v / render_height;
 
         //calculate the location of upper left pixel
         auto viewport_upper_left = camera_center - (focus_dist * w) - viewport_u/2 - viewport_v/2;

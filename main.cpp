@@ -12,9 +12,12 @@ SDL_Renderer *renderer;
 SDL_Texture *texture;
 SDL_Event event;
 
-void initialize_sdl(int width) {
+int window_width;
 
-    int height = static_cast<int>(width*9.0/16.0);
+void initialize_sdl(int window_width, int render_width) {
+
+    int window_height = static_cast<int>(window_width*9.0/16.0);
+    int render_height = static_cast<int>(render_width*9.0/16.0);
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         std::cerr << "Unable to Intialize anything" << std::endl;
     }
@@ -24,9 +27,9 @@ void initialize_sdl(int width) {
     window = SDL_CreateWindow("Ray Tracer",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        width,
-        height,
-        SDL_WINDOW_SHOWN);
+        window_width,
+        window_height,
+        SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
     if (!window) {
         std::cerr << "Unable to initialize window" << std::endl;
@@ -41,7 +44,7 @@ void initialize_sdl(int width) {
     texture = SDL_CreateTexture(renderer,
         SDL_PIXELFORMAT_RGB24,
         SDL_TEXTUREACCESS_STREAMING,
-        width, height);
+        render_width, render_height);
     if (!texture) {
         std::cerr << "Unable to initialize texture" << std::endl;
     }
@@ -62,7 +65,7 @@ int main() {
 
     for (int a = -11; a < 11; ++a) {
         for (int b = -11; b < 11; ++b) {
-            auto choose_mat = random_double();      // choose material based on probability
+            auto choose_mat = random_double(0, 1.0);      // choose material based on probability
 
             // choose position on the plane with some randomness
             point3 center(a + 0.9*random_double(), 0.2, b + 0.9*random_double());
@@ -101,13 +104,14 @@ int main() {
     auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
     world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 
+    window_width = 900;
+
     camera cam;
-
     cam.aspect_ratio    = 16.0 / 9.0;
-    cam.image_width     = 640;
+    cam.render_width     = 500;
 
-    cam.samples_per_pixel = 100;
-    cam.max_depth         = 50;
+    cam.samples_per_pixel = 40;
+    cam.max_depth         = 10;
 
     cam.vfov     = 20;
     cam.lookfrom = point3(13, 2, 3);
@@ -117,7 +121,7 @@ int main() {
     cam.defocus_angle = 0.6;
     cam.focus_dist    = 10.0;
 
-    initialize_sdl(cam.image_width);
+    initialize_sdl(window_width, cam.render_width);
     bool exit = cam.render(world, renderer, texture);
     if (exit) {
         destroy();
@@ -134,7 +138,7 @@ int main() {
                 exit = true;
             }
         }
-        SDL_Delay(50);
+        SDL_Delay(500);
     }
     return 0;
 }
