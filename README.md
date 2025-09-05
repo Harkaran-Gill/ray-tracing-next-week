@@ -25,8 +25,7 @@ This program generates photorealistic images by simulating the path of light ray
 - [x] Diffuse (Lambertian) materials
 - [x] Metal materials with reflection
 - [x] Dielectric materials with refraction (glass, water)
-- [ ] Positionable camera with depth of field
-- [ ] Bounding Volume Hierarchy (BVH) for performance optimization
+- [x] Positionable camera with depth of field
 
 ## Getting Started
 
