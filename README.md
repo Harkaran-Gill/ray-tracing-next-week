@@ -2,13 +2,8 @@
 
 A simple, CPU-based ray tracer built in C++ by following Peter Shirley's "Ray Tracing in One Weekend" book series. This project serves as a personal exploration into the fundamentals of computer graphics and rendering algorithms.
 
-<!-- =================================================================== -->
-<!--                  ADD YOUR BEST RENDER IMAGE HERE                  -->
-<!-- =================================================================== -->
-<!-- First, add a great-looking PNG image to your repository. Then,     -->
-<!-- uncomment the line below and replace the placeholder.              -->
-<!-- =================================================================== -->
-<!-- ![My Ray Tracer Render](images/final_render.png) -->
+![alt text](images/final_render.png)
+[Source](images/final_render.png)
 
 ## About This Project
 
@@ -51,21 +46,7 @@ Follow these steps to clone and build the ray tracer from source:
 
    git clone https://github.com/Harkaran-Gill/RayTracer.git
 
-
-2. Create a build directory  
-      mkdir build  
-      cd build
-
-
-3. Configure the project with CMake
-   On Windows, you might need to specify the generator:  
-   cmake .. -G "Visual Studio 17 2022"  
-   cmake ..
-
-
-4. Build the project
-   This will create an executable in the build directory  
-   cmake --build . --config Release
+2. Build using CMake
 
 
 #### For CLion:
@@ -78,12 +59,6 @@ button.
 
 
 ## Running the executable
-As of now running the executable requires you to redirect the output the program
-to a file using '>' operator. Run the following commands on the terminal.
+Either press the big green Run button or run the .exe file from the terminal manually
 
-#### For CLion:
-.\cmake-build-debug\RayTracing.exe > image.ppm
 
-#### For Visual Studio 
-Run this in the same directory as your .exe file.  
-.\RayTracing.exe > image.ppm
