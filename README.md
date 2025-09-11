@@ -61,4 +61,8 @@ button.
 ## Running the executable
 Either press the big green Run button or run the .exe file from the terminal manually
 
+### Citation:
+[_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
+
+
 
