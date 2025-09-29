@@ -10,17 +10,19 @@
 class sphere : public hittable {
 public:
     sphere(const point3& center, double radius, shared_ptr<material> mat) : center(center), radius(std::fmax(0, radius))
-    , mat(mat) { }
+        , mat(mat) {
+        radius_squared = radius * radius;
+    }
 
     //This function is called by the hit function of the "hittable_list" class
     bool hit (const ray& r, interval ray_t, hit_record& rec) const override{
-        vec3 oc = center - r.origin();                      // Ray origin to Sphere center
-        auto a = r.direction().length_squared();
-        auto h = dot(r.direction(), oc);
-        auto c = oc.length_squared() - radius*radius;
+        vec3 oc = center - r.orig;                      // Ray origin to Sphere center
+        auto a = r.dir.length_squared();
+        auto h = dot(r.dir, oc);
+        auto c = oc.length_squared() - radius_squared;
         auto discriminant = h*h - a*c;
 
-        if (discriminant < 0) {
+        if (discriminant < 0.0) {
             return false;
         }
 
@@ -47,6 +49,7 @@ private:
     point3 center;
     double radius;
     shared_ptr<material> mat;
+    double radius_squared;
 };
 
 #endif //SPHERE_H
