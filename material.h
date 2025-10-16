@@ -78,7 +78,7 @@ public:
         vec3 direction;
         // We use reflectance > random_double() since, practically light is only partially reflected
         // so we use probability to approximate light behaviour here
-        if (cannot_refract ) {
+        if (cannot_refract || reflectance(cos_theta, ri) > random_double()) {
             direction = reflect(unit_direction, rec.normal);
         }
         else {

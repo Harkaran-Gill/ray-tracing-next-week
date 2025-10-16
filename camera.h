@@ -27,7 +27,7 @@ public:
 
     bool render(const hittable& world, SDL_Renderer *renderer, SDL_Texture *texture){
         initialize();
-        int time_start = SDL_GetTicks();
+        Uint32 time_start = SDL_GetTicks();
         //Render
         std::cout << "P3\n" << render_width << " " << render_height << "\n255\n";
 
@@ -53,12 +53,12 @@ public:
                 if (event.type == SDL_QUIT) {
                     return true;
                 }
-                else if (event.key.keysym.sym == SDLK_ESCAPE) {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
                     return true;
                 }
             }
         }
-        int time_end = SDL_GetTicks();
+        Uint32 time_end = SDL_GetTicks();
         std::clog << "\rDone!  "<< (time_end - time_start)/1000.0<< "               " << render_height << '\n';
         return false;
     }

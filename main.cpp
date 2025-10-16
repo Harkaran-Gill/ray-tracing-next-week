@@ -18,8 +18,9 @@ void initialize_sdl(int window_width, int render_width) {
 
     int window_height = static_cast<int>(window_width*9.0/16.0);
     int render_height = static_cast<int>(render_width*9.0/16.0);
+
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        std::cerr << "Unable to Intialize anything" << std::endl;
+        std::cerr << "Unable to Initialize anything" << std::endl;
     }
 
     // TODO: Check width !> window size
@@ -50,16 +51,13 @@ void initialize_sdl(int window_width, int render_width) {
     }
 }
 
-
 void destroy(){
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 }
-int main() {
-    //set the world
-    hittable_list world;
 
+static void scene1(hittable_list& world, camera& cam) {
     auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
     world.add(make_shared<sphere>(point3(0, -1000, 0), 1000, ground_material));
 
@@ -103,13 +101,12 @@ int main() {
     world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
     world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 
-    window_width = 900;
+    window_width = 1000;
 
-    camera cam;
     cam.aspect_ratio    = 16.0 / 9.0;
-    cam.render_width     = 600;
+    cam.render_width     = 500;
 
-    cam.samples_per_pixel = 40;
+    cam.samples_per_pixel = 50;
     cam.max_depth         = 10;
 
     cam.vfov     = 20;
@@ -117,9 +114,52 @@ int main() {
     cam.lookat   = point3(0 ,0 ,0);
     cam.vup      = vec3(0, 1, 0);
 
-    cam.defocus_angle = 0.6;
+    cam.defocus_angle = 0.0;
+    cam.focus_dist    = 10.0;
+}
+
+static void scene2(hittable_list& world, camera& cam) {
+    auto ground_material     = make_shared<lambertian>(color(0.5, 0.5, 0.5));
+    auto material_dielectric = make_shared<dielectric>(1.5);
+    auto material_bubble     = make_shared<dielectric>(1.0/1.5);
+    auto material_metal      = make_shared<metal>(color(0.2,0.5,0.7), 0);
+    auto material_lambertian = make_shared<lambertian>(color(0.2, 0.2, 0.8));
+
+    auto sphere_ground  = make_shared<sphere>(point3(0, -1000, 0), 1000, ground_material);
+    auto sphere_left    = make_shared<sphere>(point3(-1,0.5,-1), 0.49, material_dielectric);
+    auto sphere_bubble  = make_shared<sphere>(point3(-1,0.5,-1), 0.45, material_bubble);
+    auto sphere_middle  = make_shared<sphere>(point3(0,0.5,-1), 0.49, material_metal);
+    auto sphere_right   = make_shared<sphere>(point3(1,0.5,-1), 0.49, material_lambertian);
+
+    world.add(sphere_ground);
+    world.add(sphere_left);
+    // world.add(sphere_bubble);
+    world.add(sphere_middle);
+    world.add(sphere_right);
+
+    window_width = 1200;
+
+    cam.aspect_ratio    = 16.0 / 9.0;
+    cam.render_width     = 1000;
+
+    cam.samples_per_pixel = 1000;
+    cam.max_depth         = 20;
+
+    cam.vfov     = 60;
+    cam.lookfrom = point3(0, 0.5, 1);
+    cam.lookat   = point3(0 ,0.45 ,-1);
+    cam.vup      = vec3(0, 1, 0);
+
+    cam.defocus_angle = 0.0;
     cam.focus_dist    = 10.0;
 
+}
+
+int main() {
+    //set the world
+    hittable_list world;
+    camera cam;
+    scene2(world, cam);
     initialize_sdl(window_width, cam.render_width);
     bool exit = cam.render(world, renderer, texture);
     if (exit) {
@@ -139,5 +179,6 @@ int main() {
         }
         SDL_Delay(500);
     }
+    destroy();
     return 0;
 }

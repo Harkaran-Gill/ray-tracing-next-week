@@ -10,6 +10,11 @@ find_package(SDL2 REQUIRED CONFIG)
 
 add_executable(RayTracing main.cpp)
 
+# Release Flags
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    target_compile_options(RayTracing PRIVATE -O3 -march=native -ffast-math -DNDEBUG)
+endif ()
+
 target_link_libraries(RayTracing PRIVATE SDL2::SDL2 SDL2::SDL2main)
 
 
