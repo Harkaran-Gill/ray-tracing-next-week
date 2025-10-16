@@ -8,6 +8,7 @@ cmake-build-release-visual-studio/
 .vs/
 out/
 CMakeSettings.json
+build/
 
 #rendered test images
 image.ppm
