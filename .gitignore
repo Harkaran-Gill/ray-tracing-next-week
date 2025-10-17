@@ -1,0 +1,20 @@
+#Clion Specifics
+.idea/
+cmake-build-debug/
+cmake-build-release/
+cmake-build-release-visual-studio/
+
+# Visual Studio Specifics
+.vs/
+out/
+CMakeLists.txt
+CMakeSettings.json
+CppProperties.json
+build/
+
+#rendered test images
+image.ppm
+RayTracedImages/
+
+# python virtual env
+.venv/
