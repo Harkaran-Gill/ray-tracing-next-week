@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.31)
-project(RayTracing)
+project(RayTracingNextWeek)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Change this path to your installed location of SDL2
 set(CMAKE_PREFIX_PATH "C:/SDL2")
@@ -16,6 +17,4 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 endif ()
 
 target_link_libraries(RayTracing PRIVATE SDL2::SDL2 SDL2::SDL2main)
-
-
 

@@ -130,12 +130,6 @@ inline vec3 random_unit_vector() {
         auto length_sq = p.length_squared();
         if (length_sq < 1) {
             return p / std::sqrt(length_sq);
-
-            // The below could be used as well since no noticiable difference occurs
-            // with or without normalization
-            //          --------
-            // return p; 
-
         }
     }
 }

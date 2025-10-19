@@ -31,7 +31,7 @@ public:
         if (scatter_direction.near_zero())
             scatter_direction = rec.normal;
 
-        scattered = ray(rec.p, scatter_direction);
+        scattered = ray(rec.p, scatter_direction, ray_in.time());
         attenuation = albedo;
         return true;
 
@@ -49,7 +49,7 @@ public:
     const override {
         vec3 reflected = reflect(ray_in.direction(), rec.normal);   // calculating reflected ray's direction
         reflected = unit_vector(reflected) + (fuzz * random_unit_vector());
-        scattered = ray(rec.p, reflected);
+        scattered = ray(rec.p, reflected, ray_in.time());
         attenuation = albedo;
         return dot(scattered.direction(), rec.normal) > 0;
     }
@@ -85,7 +85,7 @@ public:
             direction = refract(unit_direction, rec.normal, ri);
         }
 
-        scattered = ray(rec.p, direction);
+        scattered = ray(rec.p, direction, ray_in.time());
         return true;
     }
 

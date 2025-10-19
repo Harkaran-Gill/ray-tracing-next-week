@@ -5,7 +5,6 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <SDL.h>
 #include "hittable.h"
 #include "material.h"
 #include "rt.h"
@@ -13,7 +12,7 @@
 class camera {
 public:
     double aspect_ratio     = 1.0;      // Ratio of image width over height
-    int render_width         = 100;      // Width of Rendered image in pixels
+    int render_width        = 100;      // Width of Rendered image in pixels
     int samples_per_pixel   = 10;       // Number random samples for each pixel
     int max_depth           = 10;       // Maximum number of ray bounces in row
 
@@ -27,6 +26,12 @@ public:
 
     bool render(const hittable& world, SDL_Renderer *renderer, SDL_Texture *texture){
         initialize();
+        std::ofstream img("./image.ppm");
+        if (!img.is_open()) {
+            std::cerr << "Error: could not open ../image.ppm\n";
+            return;
+        }
+
         Uint32 time_start = SDL_GetTicks();
         //Render
         std::cout << "P3\n" << render_width << " " << render_height << "\n255\n";
@@ -131,19 +136,21 @@ private:
         // Construct a ray from defocus disk and directed at randomly sampled point
         // around the pixel location i, j
 
-        auto offset = sample_square();
+        auto offset       = sample_square();
         auto pixel_sample = pixel00_loc + ((i + offset.x()) * pixel_delta_u)
                             + ((j + offset.x()) * pixel_delta_v);
 
-        auto ray_origin = (defocus_angle <= 0) ? camera_center : defocus_disk_sample();
+        auto ray_origin   = (defocus_angle <= 0) ? camera_center : defocus_disk_sample();
         auto ray_direction = pixel_sample - ray_origin;
+        auto ray_time     = random_double();
 
-        return ray(ray_origin, ray_direction);
+        return ray(ray_origin, ray_direction, ray_time);
+
 
     }
 
     // TODO: implement a non-square version to experiment with non-square pixels
-    vec3 sample_square() {
+    static vec3 sample_square() {
         // Returns the vector to a random point in the [-0.5, -0.5] - [0.5, 0.5] unit square
         return vec3(random_double() - 0.5, random_double() - 0.5, 0);
         // -0.5 because random_double() returns in range [0, 1]
