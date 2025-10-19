@@ -1,5 +1,6 @@
-#include <chrono>
 #include "rt.h"
+
+#include "bvh.h"
 #include "camera.h"
 #include "hittable.h"
 #include "hittable_list.h"
@@ -88,6 +89,8 @@ static void scene2(hittable_list& world, camera& cam) {
     world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material1));
     world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
     world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
+
+    world = hittable_list(make_shared<bvh_node>(world));
 
     cam.aspect_ratio    = 16.0 / 9.0;
     cam.image_width     = 400;
