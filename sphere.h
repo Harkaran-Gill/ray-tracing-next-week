@@ -11,11 +11,15 @@ class sphere : public hittable {
 public:
     // Stationary sphere
     sphere(const point3& static_center, double radius, shared_ptr<material> mat)
-     : center(static_center, vec3(0,0,0)), radius(std::fmax(0, radius)), mat(mat) { }
+     : center(static_center, vec3(0,0,0)), radius(std::fmax(0, radius)), mat(mat) {
+        radius_squared = radius*radius;
+    }
 
     sphere(const point3& center1, const point3& center2, double radius,
         shared_ptr<material> mat)
-            : center(center1, (center2-center1)), radius(std::fmax(0,radius)), mat(std::move(mat)) {}
+            : center(center1, (center2-center1)), radius(std::fmax(0,radius)), mat(std::move(mat)) {
+        radius_squared = radius*radius;
+    }
 
     //This function is called by the hit function of the "hittable_list" class
     bool hit (const ray& r, interval ray_t, hit_record& rec) const override{
@@ -23,7 +27,7 @@ public:
         vec3 oc = current_center - r.origin();                      // Ray origin to Sphere center
         auto a = r.direction().length_squared();
         auto h = dot(r.direction(), oc);
-        auto c = oc.length_squared() - radius*radius;
+        auto c = oc.length_squared() - radius_squared;
         auto discriminant = h*h - a*c;
 
         if (discriminant < 0) {
