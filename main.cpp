@@ -28,10 +28,10 @@ static void scene1(hittable_list& world, camera& cam) {
 
 
     cam.aspect_ratio    = 16.0 / 9.0;
-    cam.image_width     = 1000;
+    cam.image_width     = 500;
 
-    cam.samples_per_pixel = 100;
-    cam.max_depth         = 20;
+    cam.samples_per_pixel = 50;
+    cam.max_depth         = 10;
 
     cam.vfov     = 60;
     cam.lookfrom = point3(0, 0.5, 1);
@@ -58,9 +58,11 @@ static void scene2(hittable_list& world, camera& cam) {
                 shared_ptr<material> sphere_material;
 
                 if (choose_mat < 0.8) {
+                    // Lambertian
                     auto albedo = color::random() * color::random();
                     sphere_material = make_shared<lambertian>(albedo);
-                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
+                    auto center2 = center + point3(0,random_double(0,0.5), 0);
+                    world.add(make_shared<sphere>(center, center2, 0.2, sphere_material));
                 }
 
                 else if (choose_mat < 0.95) {
@@ -88,7 +90,7 @@ static void scene2(hittable_list& world, camera& cam) {
     world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 
     cam.aspect_ratio    = 16.0 / 9.0;
-    cam.image_width     = 500;
+    cam.image_width     = 400;
 
     cam.samples_per_pixel = 50;
     cam.max_depth         = 10;
@@ -124,6 +126,10 @@ int main() {
             std::cout << "Please enter a valid choice number" << std::endl;
         }
     }
+    auto start_time =  std::chrono::system_clock::now();
     cam.render(world);
+    auto end_time = std::chrono::system_clock::now();
+    auto time = end_time - start_time;
+    std::cout << "\nTime taken to render: " << std::chrono::duration_cast<std::chrono::milliseconds>(time).count()/(1000.0) << std::endl;
     return 0;
 }
