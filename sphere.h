@@ -12,13 +12,23 @@ public:
     // Stationary sphere
     sphere(const point3& static_center, double radius, shared_ptr<material> mat)
      : center(static_center, vec3(0,0,0)), radius(std::fmax(0, radius)), mat(mat) {
-        radius_squared = radius*radius;
+        auto rvec = vec3(radius, radius, radius);
+        bbox = aabb(static_center - rvec, static_center + rvec);   // construct a box around the sphere
+
+        radius_squared = radius * radius;
     }
 
+    // Moving Sphere
     sphere(const point3& center1, const point3& center2, double radius,
         shared_ptr<material> mat)
             : center(center1, (center2-center1)), radius(std::fmax(0,radius)), mat(std::move(mat)) {
-        radius_squared = radius*radius;
+
+        auto rvec = vec3(radius, radius, radius);
+        aabb box1 = aabb(center1 - rvec, center1 + rvec);
+        aabb box2 = aabb(center2 -rvec, center2 + rvec);
+        bbox = aabb(box1, box2);
+
+        radius_squared = radius * radius;
     }
 
     //This function is called by the hit function of the "hittable_list" class
@@ -53,11 +63,16 @@ public:
         return true;
     }
 
+    aabb bounding_box() const override {
+        return bbox;
+    }
+
 private:
     ray center;
     double radius;
-    shared_ptr<material> mat;
     double radius_squared;
+    shared_ptr<material> mat;
+    aabb bbox;
 };
 
 #endif //SPHERE_H

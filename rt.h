@@ -8,6 +8,7 @@
 #include <cmath>
 #include <random>
 #include <iostream>
+#include <chrono>
 #include <limits>
 #include <memory>
 
@@ -35,6 +36,10 @@ inline double random_double() {
 //returns a random, real number in range [min, max)
 inline double random_double(double min, double max) {
     return min + (max-min) * random_double();
+}
+
+inline int random_int(int min, int max) {
+    return int(random_double(min, max+1));
 }
 
 //common headers

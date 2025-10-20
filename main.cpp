@@ -1,5 +1,6 @@
-#include <chrono>
 #include "rt.h"
+
+#include "bvh.h"
 #include "camera.h"
 #include "hittable.h"
 #include "hittable_list.h"
@@ -112,8 +113,8 @@ static void scene2(hittable_list& world, camera& cam) {
                     // Lambertian
                     auto albedo = color::random() * color::random();
                     sphere_material = make_shared<lambertian>(albedo);
-                    auto center2 = center + point3(0,random_double(0,0.5), 0);
-                    world.add(make_shared<sphere>(center, center2, 0.2, sphere_material));
+                    //auto center2 = center + point3(0,random_double(0,0.5), 0);
+                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
                 }
 
                 else if (choose_mat < 0.95) {
@@ -141,6 +142,8 @@ static void scene2(hittable_list& world, camera& cam) {
     world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 
     window_width = 1000;
+
+    world = hittable_list(make_shared<bvh_node>(world));
 
     cam.aspect_ratio    = 16.0 / 9.0;
     cam.render_width     = 400;
