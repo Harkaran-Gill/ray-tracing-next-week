@@ -62,8 +62,8 @@ static void scene2(hittable_list& world, camera& cam) {
                     // Lambertian
                     auto albedo = color::random() * color::random();
                     sphere_material = make_shared<lambertian>(albedo);
-                    auto center2 = center + point3(0,random_double(0,0.5), 0);
-                    world.add(make_shared<sphere>(center, center2, 0.2, sphere_material));
+                    //auto center2 = center + point3(0,random_double(0,0.5), 0);
+                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
                 }
 
                 else if (choose_mat < 0.95) {
@@ -93,10 +93,10 @@ static void scene2(hittable_list& world, camera& cam) {
     world = hittable_list(make_shared<bvh_node>(world));
 
     cam.aspect_ratio    = 16.0 / 9.0;
-    cam.image_width     = 400;
+    cam.image_width     = 800;
 
-    cam.samples_per_pixel = 50;
-    cam.max_depth         = 10;
+    cam.samples_per_pixel = 100;
+    cam.max_depth         = 15;
 
     cam.vfov     = 20;
     cam.lookfrom = point3(13, 2, 3);
