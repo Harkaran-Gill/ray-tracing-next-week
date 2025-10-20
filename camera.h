@@ -9,6 +9,8 @@
 #include "material.h"
 #include "rt.h"
 
+#include <SDL.h>
+
 class camera {
 public:
     double aspect_ratio     = 1.0;      // Ratio of image width over height
@@ -26,11 +28,6 @@ public:
 
     bool render(const hittable& world, SDL_Renderer *renderer, SDL_Texture *texture){
         initialize();
-        std::ofstream img("./image.ppm");
-        if (!img.is_open()) {
-            std::cerr << "Error: could not open ../image.ppm\n";
-            return;
-        }
 
         Uint32 time_start = SDL_GetTicks();
         //Render

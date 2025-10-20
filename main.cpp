@@ -12,7 +12,7 @@ SDL_Renderer *renderer;
 SDL_Texture *texture;
 SDL_Event event;
 
-int window_width;
+int window_width = 1000;
 
 void initialize_sdl(int window_width, int render_width) {
 
@@ -76,9 +76,10 @@ static void scene1(hittable_list& world, camera& cam) {
     world.add(sphere_middle);
     world.add(sphere_right);
 
+    window_width = 1000;
 
     cam.aspect_ratio    = 16.0 / 9.0;
-    cam.image_width     = 500;
+    cam.render_width     = 500;
 
     cam.samples_per_pixel = 50;
     cam.max_depth         = 10;
@@ -142,7 +143,7 @@ static void scene2(hittable_list& world, camera& cam) {
     window_width = 1000;
 
     cam.aspect_ratio    = 16.0 / 9.0;
-    cam.image_width     = 400;
+    cam.render_width     = 400;
 
     cam.samples_per_pixel = 50;
     cam.max_depth         = 10;
@@ -154,43 +155,6 @@ static void scene2(hittable_list& world, camera& cam) {
 
     cam.defocus_angle = 0.0;
     cam.focus_dist    = 10.0;
-}
-
-static void scene2(hittable_list& world, camera& cam) {
-    auto ground_material     = make_shared<lambertian>(color(0.5, 0.5, 0.5));
-    auto material_dielectric = make_shared<dielectric>(1.5);
-    auto material_bubble     = make_shared<dielectric>(1.0/1.5);
-    auto material_metal      = make_shared<metal>(color(0.2,0.5,0.7), 0);
-    auto material_lambertian = make_shared<lambertian>(color(0.2, 0.2, 0.8));
-
-    auto sphere_ground  = make_shared<sphere>(point3(0, -1000, 0), 1000, ground_material);
-    auto sphere_left    = make_shared<sphere>(point3(-1,0.5,-1), 0.49, material_dielectric);
-    auto sphere_bubble  = make_shared<sphere>(point3(-1,0.5,-1), 0.45, material_bubble);
-    auto sphere_middle  = make_shared<sphere>(point3(0,0.5,-1), 0.49, material_metal);
-    auto sphere_right   = make_shared<sphere>(point3(1,0.5,-1), 0.49, material_lambertian);
-
-    world.add(sphere_ground);
-    world.add(sphere_left);
-    // world.add(sphere_bubble);
-    world.add(sphere_middle);
-    world.add(sphere_right);
-
-    window_width = 1200;
-
-    cam.aspect_ratio    = 16.0 / 9.0;
-    cam.render_width     = 1000;
-
-    cam.samples_per_pixel = 1000;
-    cam.max_depth         = 20;
-
-    cam.vfov     = 60;
-    cam.lookfrom = point3(0, 0.5, 1);
-    cam.lookat   = point3(0 ,0.45 ,-1);
-    cam.vup      = vec3(0, 1, 0);
-
-    cam.defocus_angle = 0.0;
-    cam.focus_dist    = 10.0;
-
 }
 
 int main() {
@@ -215,13 +179,20 @@ int main() {
             std::cout << "Please enter a valid choice number" << std::endl;
         }
     }
-    auto start_time =  std::chrono::system_clock::now();
     initialize_sdl(window_width, cam.render_width);
+    auto start_time =  SDL_GetTicks();
+    if (window) {
+        SDL_FlashWindow(window, SDL_FLASH_UNTIL_FOCUSED);
+        SDL_RaiseWindow(window);
+    }
     bool exit = cam.render(world, renderer, texture);
+    auto end_time = SDL_GetTicks();
     if (exit) {
         destroy();
         return 0;
     }
+    auto time = end_time - start_time - 500;
+    std::cout << "Time taken to render: " << time/1000.0f << std::endl;
     while (!exit) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -236,8 +207,6 @@ int main() {
         SDL_Delay(500);
     }
     destroy();
-    auto end_time = std::chrono::system_clock::now();
-    auto time = end_time - start_time;
-    std::cout << "\nTime taken to render: " << std::chrono::duration_cast<std::chrono::milliseconds>(time).count()/(1000.0) << std::endl;
+
     return 0;
 }
