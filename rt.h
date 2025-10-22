@@ -48,6 +48,6 @@ inline int random_int(int min, int max) {
 #include "ray.h"
 #include "vec3.h"
 
-//SDL Main
+//SDL Main, planning to move to GUI so transferring entry task to SDL
 #define SDL_MAIN_HANDLED
 #endif //RT_H

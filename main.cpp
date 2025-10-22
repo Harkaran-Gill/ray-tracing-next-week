@@ -5,8 +5,9 @@
 #include "hittable.h"
 #include "hittable_list.h"
 #include "material.h"
-#include <SDL.h>
 #include "sphere.h"
+
+#include <SDL.h>
 
 SDL_Window *window;
 SDL_Renderer *renderer;
@@ -56,6 +57,7 @@ void destroy(){
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    SDL_Quit();
 }
 
 static void scene1(hittable_list& world, camera& cam) {
@@ -77,7 +79,7 @@ static void scene1(hittable_list& world, camera& cam) {
     world.add(sphere_middle);
     world.add(sphere_right);
 
-    window_width = 1000;
+    window_width = 800;
 
     cam.aspect_ratio    = 16.0 / 9.0;
     cam.render_width     = 500;
@@ -146,7 +148,7 @@ static void scene2(hittable_list& world, camera& cam) {
     world = hittable_list(make_shared<bvh_node>(world));
 
     cam.aspect_ratio    = 16.0 / 9.0;
-    cam.render_width     = 400;
+    cam.render_width     = 1000;
 
     cam.samples_per_pixel = 50;
     cam.max_depth         = 10;
@@ -194,7 +196,7 @@ int main() {
         destroy();
         return 0;
     }
-    auto time = end_time - start_time - 500;
+    auto time = end_time - start_time;
     std::cout << "Time taken to render: " << time/1000.0f << std::endl;
     while (!exit) {
         while (SDL_PollEvent(&event)) {
@@ -207,6 +209,11 @@ int main() {
                 exit = true;
             }
         }
+        // Updating to make sure there are no visual defects after the program has rendered everything
+        SDL_UpdateTexture(texture, nullptr, cam.pixels.data(), cam.render_width*3 );
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+        SDL_RenderPresent(renderer);
         SDL_Delay(500);
     }
     destroy();

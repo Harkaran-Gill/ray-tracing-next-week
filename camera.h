@@ -8,7 +8,6 @@
 #include "hittable.h"
 #include "material.h"
 #include "rt.h"
-
 #include <SDL.h>
 
 class camera {
@@ -17,7 +16,7 @@ public:
     int render_width        = 100;      // Width of Rendered image in pixels
     int samples_per_pixel   = 10;       // Number random samples for each pixel
     int max_depth           = 10;       // Maximum number of ray bounces in row
-
+    std::vector<uint8_t> pixels;        // Pixel array for image
     double vfov       = 90;                 // Vertical field of view of camera
     point3 lookfrom   = point3(0, 0, 0);    // The position to look from/ camera center
     point3 lookat     = point3(0 ,1 , 0);   // The position camera is pointing towards
@@ -27,9 +26,8 @@ public:
     double focus_dist       = 10;    // Distance between lookfrom and the plane of perfect focus
 
     bool render(const hittable& world, SDL_Renderer *renderer, SDL_Texture *texture){
-        initialize();
-
         Uint32 time_start = SDL_GetTicks();
+        initialize();
         //Render
         std::cout << "P3\n" << render_width << " " << render_height << "\n255\n";
 
@@ -72,7 +70,6 @@ private:
     point3 pixel00_loc;             // Center point location of the uppermost left pixel
     vec3 pixel_delta_u;             // Offset of pixel to the right
     vec3 pixel_delta_v;             // Offset of pixel below
-    std::vector<uint8_t> pixels;
     SDL_Event event;
     vec3 u, v, w;                   // Camera frame basis vectors
     vec3 defocus_disk_u;            // Defocus disk horizontal radius
