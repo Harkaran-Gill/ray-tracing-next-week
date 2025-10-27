@@ -7,6 +7,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(RayTracing main.cpp)
 
 # Release Flags
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    target_compile_options(RayTracing PRIVATE -O3 -march=native -ffast-math -DNDEBUG)
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(RayTracing PRIVATE
+            $<$<CONFIG:Release>:-O3>
+            $<$<CONFIG:Release>:-march=native>
+            $<$<CONFIG:Release>:-ffast-math> )
 endif ()
+target_compile_definitions(RayTracing PRIVATE
+        $<$<CONFIG:Release>:NDEBUG>
+)

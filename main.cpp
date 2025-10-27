@@ -23,7 +23,7 @@ static void scene1(hittable_list& world, camera& cam) {
 
     world.add(sphere_ground);
     world.add(sphere_left);
-    // world.add(sphere_bubble);
+    world.add(sphere_bubble);
     world.add(sphere_middle);
     world.add(sphere_right);
 
@@ -68,7 +68,7 @@ static void scene2(hittable_list& world, camera& cam) {
 
                 else if (choose_mat < 0.95) {
                     auto albedo = color::random() * color::random();
-                    auto fuzz = random_double(0, 0.5);
+                    auto fuzz = random_double(0, 0.4);
                     sphere_material = make_shared<metal>(albedo, fuzz);
                     world.add(make_shared<sphere>(center, 0.2, sphere_material));
                 }
@@ -90,13 +90,11 @@ static void scene2(hittable_list& world, camera& cam) {
     world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
     world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 
-    world = hittable_list(make_shared<bvh_node>(world));
-
     cam.aspect_ratio    = 16.0 / 9.0;
     cam.image_width     = 800;
 
-    cam.samples_per_pixel = 100;
-    cam.max_depth         = 15;
+    cam.samples_per_pixel = 50;
+    cam.max_depth         = 10;
 
     cam.vfov     = 20;
     cam.lookfrom = point3(13, 2, 3);
@@ -106,6 +104,34 @@ static void scene2(hittable_list& world, camera& cam) {
     cam.defocus_angle = 0.0;
     cam.focus_dist    = 10.0;
 }
+static void scene3(hittable_list& world, camera& cam) {
+    auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
+    auto material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
+    auto material_left   = make_shared<dielectric>(1.50);
+    auto material_bubble = make_shared<dielectric>(1.00 / 1.50);
+    auto material_right  = make_shared<metal>(color(0.8, 0.6, 0.2), 0.5);
+
+    world.add(make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100.0, material_ground));
+    world.add(make_shared<sphere>(point3( 0.0,    0.0, -1.2),   0.5, material_center));
+    world.add(make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, material_left));
+    world.add(make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.4, material_bubble));
+    world.add(make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, material_right));
+
+    cam.aspect_ratio      = 16.0 / 9.0;
+    cam.image_width       = 800;
+    cam.samples_per_pixel = 50;
+    cam.max_depth         = 10;
+
+
+    cam.vfov     = 30;
+    cam.lookfrom = point3(-2,2,1);
+    cam.lookat   = point3(0,0,-1);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0.0;
+    cam.focus_dist = 10.0;
+
+}
 
 int main() {
     //set the world
@@ -113,8 +139,9 @@ int main() {
     camera cam;
     while (true) {
         std::cout << "Please enter the scene number to render: " << std::endl;
-        std::cout << "1: Scene-1, Simple scene with only 3-Spheres" << std::endl;
-        std::cout << "2: Scene-2, A more complex scene with more than 50 spheres" << std::endl;
+        std::cout << "1: Scene-1, Simple scene with only 3 Spheres" << std::endl;
+        std::cout << "2: Scene-2, A more complex scene with more than 50 Spheres" << std::endl;
+        std::cout << "3: Scene-3, Another scene with 3 Spheres" << std::endl;
         int choice;
         std::cin >> choice;
         if (choice == 1) {
@@ -125,14 +152,20 @@ int main() {
             scene2(world, cam);
             break;
         }
+        if (choice == 3) {
+            scene3(world, cam);
+            break;
+        }
         else {
             std::cout << "Please enter a valid choice number" << std::endl;
         }
     }
     auto start_time =  std::chrono::system_clock::now();
+    world = hittable_list(make_shared<bvh_node>(world));
     cam.render(world);
     auto end_time = std::chrono::system_clock::now();
     auto time = end_time - start_time;
-    std::cout << "\nTime taken to render: " << std::chrono::duration_cast<std::chrono::milliseconds>(time).count()/(1000.0) << std::endl;
+    std::cout << "\nTime taken to render: " <<
+        double(std::chrono::duration_cast<std::chrono::milliseconds>(time).count())/(1000.0) << std::endl;
     return 0;
 }
