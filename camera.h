@@ -158,7 +158,7 @@ private:
             return color(0, 0, 0);
         }
 
-        //calculating the background gradient
+        // Calculating the background gradient
         vec3 unit_direction = unit_vector(r.direction());
         auto a = (unit_direction.y() + 1) * 0.5;
         return (1-a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);

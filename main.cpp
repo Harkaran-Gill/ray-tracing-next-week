@@ -9,7 +9,7 @@
 #include "texture.h"
 
 
-static void scene1(hittable_list& world, camera& cam) {
+static void wide_angle_spheres(hittable_list& world, camera& cam) {
     auto ground_material     = make_shared<lambertian>(color(0.5, 0.5, 0.5));
     auto material_dielectric = make_shared<dielectric>(1.5);
     auto material_bubble     = make_shared<dielectric>(1.0/1.5);
@@ -30,12 +30,12 @@ static void scene1(hittable_list& world, camera& cam) {
 
 
     cam.aspect_ratio    = 16.0 / 9.0;
-    cam.image_width     = 500;
+    cam.image_width     = 800;
 
     cam.samples_per_pixel = 50;
     cam.max_depth         = 10;
 
-    cam.vfov     = 60;
+    cam.vfov     = 40;
     cam.lookfrom = point3(0, 0.5, 1);
     cam.lookat   = point3(0 ,0.45 ,-1);
     cam.vup      = vec3(0, 1, 0);
@@ -45,7 +45,7 @@ static void scene1(hittable_list& world, camera& cam) {
 
 }
 
-static void scene2(hittable_list& world, camera& cam) {
+static void bouncing_spheres(hittable_list& world, camera& cam) {
     auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
     auto checker = make_shared<checker_texture>(0.32, color(.2,.3,.1), color(.9,.9,.9));
     world.add(make_shared<sphere>(point3(0, -1000, 0), 1000, make_shared<lambertian>(checker)));
@@ -64,8 +64,8 @@ static void scene2(hittable_list& world, camera& cam) {
                     // Lambertian
                     auto albedo = color::random() * color::random();
                     sphere_material = make_shared<lambertian>(albedo);
-                    //auto center2 = center + point3(0,random_double(0,0.5), 0);
-                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
+                    auto center2 = center + point3(0,random_double(0,0.2), 0);
+                    world.add(make_shared<sphere>(center, center2, 0.2, sphere_material));
                 }
 
                 else if (choose_mat < 0.95) {
@@ -106,7 +106,8 @@ static void scene2(hittable_list& world, camera& cam) {
     cam.defocus_angle = 0.0;
     cam.focus_dist    = 10.0;
 }
-static void scene3(hittable_list& world, camera& cam) {
+
+static void zoomed_spheres(hittable_list& world, camera& cam) {
     auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
     auto material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
     auto material_left   = make_shared<dielectric>(1.50);
@@ -135,6 +136,43 @@ static void scene3(hittable_list& world, camera& cam) {
 
 }
 
+static void checkered_spheres(hittable_list& world, camera& cam) {
+    auto checker = make_shared<checker_texture>(0.32, color(.2, .3, .1), color(.9, .9, .9));
+    world.add(make_shared<sphere>(point3(0, -10, 0), 10, make_shared<lambertian>(checker)));
+    world.add(make_shared<sphere>(point3(0, 10, 0), 10, make_shared<lambertian>(checker)));
+
+    cam.aspect_ratio      = 16.0 / 9.0;
+    cam.image_width       = 800;
+    cam.samples_per_pixel = 50;
+    cam.max_depth         = 10;
+
+    cam.vfov     = 20;
+    cam.lookfrom = point3(13,2,3);
+    cam.lookat   = point3(0,0,0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+}
+
+static void earth(hittable_list& world, camera& cam) {
+    auto earth_texture = make_shared<image_texture>("earthmap2.jpg");
+    auto earth_surface = make_shared<lambertian>(earth_texture);
+    auto globe = make_shared<sphere>(point3(0,0,0), 2, earth_surface);
+    world.add(globe);
+
+    cam.aspect_ratio      = 16.0 / 9.0;
+    cam.image_width       = 800;
+    cam.samples_per_pixel = 100;
+    cam.max_depth         = 50;
+
+    cam.vfov     = 20;
+    cam.lookfrom = point3(0,0,12);
+    cam.lookat   = point3(0,0,0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+}
+
 int main() {
     //set the world
     hittable_list world;
@@ -144,18 +182,29 @@ int main() {
         std::cout << "1: Scene-1, Simple scene with only 3 Spheres" << std::endl;
         std::cout << "2: Scene-2, A more complex scene with more than 50 Spheres" << std::endl;
         std::cout << "3: Scene-3, Another scene with 3 Spheres" << std::endl;
+        std::cout << "4: Scene-4, Checkered Spheres" << std::endl;
+        std::cout << "5: Scene-5, Earth Model" << std::endl;
+
         int choice;
         std::cin >> choice;
         if (choice == 1) {
-            scene1(world, cam);
+            wide_angle_spheres(world, cam);
             break;
         }
         if (choice == 2) {
-            scene2(world, cam);
+            bouncing_spheres(world, cam);
             break;
         }
         if (choice == 3) {
-            scene3(world, cam);
+            zoomed_spheres(world, cam);
+            break;
+        }
+        if (choice == 4) {
+            checkered_spheres(world, cam);
+            break;
+        }
+        if (choice == 5) {
+            earth(world, cam);
             break;
         }
         else {
