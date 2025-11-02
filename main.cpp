@@ -173,6 +173,24 @@ static void earth(hittable_list& world, camera& cam) {
     cam.defocus_angle = 0;
 }
 
+static void perlin(hittable_list& world, camera& cam) {
+    auto per_text = make_shared<noise_texture>();
+    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(per_text)));
+    world.add(make_shared<sphere>(point3(0, 2, 0), 2, make_shared<lambertian>(per_text)));
+
+    cam.aspect_ratio = 16.0 / 9.0;
+    cam.image_width  = 800;
+    cam.samples_per_pixel = 100;
+    cam.max_depth = 10;
+
+    cam.vfov = 20;
+    cam.lookfrom = point3(13,2,3);
+    cam.lookat   = point3(0,0,0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+}
+
 int main() {
     //set the world
     hittable_list world;
@@ -184,9 +202,10 @@ int main() {
         std::cout << "3: Scene-3, Another scene with 3 Spheres" << std::endl;
         std::cout << "4: Scene-4, Checkered Spheres" << std::endl;
         std::cout << "5: Scene-5, Earth Model" << std::endl;
+        std::cout << "6: Scene-6, Perlin Spheres" << std::endl;
 
-        int choice;
-        std::cin >> choice;
+        int choice = 6;
+        // std::cin >> choice;
         if (choice == 1) {
             wide_angle_spheres(world, cam);
             break;
@@ -205,6 +224,10 @@ int main() {
         }
         if (choice == 5) {
             earth(world, cam);
+            break;
+        }
+        if (choice == 6) {
+            perlin(world, cam);
             break;
         }
         else {

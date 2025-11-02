@@ -5,7 +5,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include "color.h"
+#include "perlin.h"
 #include "rt_stb_image.h"
 
 class texture {
@@ -17,7 +17,7 @@ public:
 
 class solid_color :public texture {
 public:
-    solid_color(const color& albedo) : albedo(albedo){}
+    explicit solid_color(const color& albedo) : albedo(albedo){}
 
     solid_color(double red, double green, double blue) : solid_color(color(red, green, blue)) {}
 
@@ -77,6 +77,18 @@ public:
 private:
     rtw_image image;
 
+};
+
+class noise_texture : public texture {
+public:
+    noise_texture() = default;
+
+    [[nodiscard]] color value(double u, double v, const point3 &p) const override {
+        return color(1, 1, 1) * noise.noise(p);
+    }
+
+private:
+    perlin noise;
 };
 
 #endif //TEXTURE_H
