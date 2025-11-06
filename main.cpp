@@ -174,7 +174,7 @@ static void zoomed_spheres(hittable_list &world, camera &cam) {
     world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
 
     cam.aspect_ratio = 16.0 / 9.0;
-    cam.image_width = 800;
+    cam.render_width = 800;
     cam.samples_per_pixel = 50;
     cam.max_depth = 10;
 
@@ -194,7 +194,7 @@ static void checkered_spheres(hittable_list &world, camera &cam) {
     world.add(make_shared<sphere>(point3(0, 10, 0), 10, make_shared<lambertian>(checker)));
 
     cam.aspect_ratio = 16.0 / 9.0;
-    cam.image_width = 800;
+    cam.render_width = 800;
     cam.samples_per_pixel = 50;
     cam.max_depth = 10;
 
@@ -213,7 +213,7 @@ static void earth(hittable_list &world, camera &cam) {
     world.add(globe);
 
     cam.aspect_ratio = 16.0 / 9.0;
-    cam.image_width = 800;
+    cam.render_width = 800;
     cam.samples_per_pixel = 100;
     cam.max_depth = 50;
 
@@ -231,7 +231,7 @@ static void perlin(hittable_list &world, camera &cam) {
     world.add(make_shared<sphere>(point3(0, 2, 0), 2, make_shared<lambertian>(per_text)));
 
     cam.aspect_ratio = 16.0 / 9.0;
-    cam.image_width = 800;
+    cam.render_width = 800;
     cam.samples_per_pixel = 100;
     cam.max_depth = 10;
 
@@ -259,7 +259,7 @@ static void quads(hittable_list &world, camera &cam) {
     world.add(make_shared<quad>(point3(-2, -3, 5), vec3(4, 0, 0), vec3(0, 0, -4), lower_teal));
 
     cam.aspect_ratio = 16.0 / 9.0;
-    cam.image_width = 800;
+    cam.render_width = 800;
     cam.samples_per_pixel = 50;
     cam.max_depth = 50;
 
@@ -287,7 +287,7 @@ static void ellipses(hittable_list &world, camera &cam) {
     world.add(make_shared<disk>(point3(-2.8,-3, 4), vec3(4, 0, 0), vec3(0, 0,-4), 1, lower_teal));
 
     cam.aspect_ratio = 16.0 / 9.0;
-    cam.image_width = 800;
+    cam.render_width = 800;
     cam.samples_per_pixel = 50;
     cam.max_depth = 50;
 
