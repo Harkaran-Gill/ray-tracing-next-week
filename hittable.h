@@ -15,6 +15,8 @@ public:
     vec3 normal;                // Surface normal of the point where the ray hit
     shared_ptr<material> mat;
     double t;                   // The root of the function of ray, since ray is just a line
+    double u;
+    double v;
     bool front_face;            // Storing if the ray is facing inwards or outwards
 
     //

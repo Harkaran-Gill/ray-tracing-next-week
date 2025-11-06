@@ -9,10 +9,12 @@ class aabb {
 public:
     interval x, y, z;
 
-    aabb() {} // default interval is empty
+    aabb() = default; // default intervals are empty
 
     aabb(const interval& x, const interval& y, const interval& z)
-        : x(x), y(y), z(z) {}
+        : x(x), y(y), z(z) {
+        pad_to_minimums();
+    }
 
     aabb(const point3& a, const point3& b) {
         // Treat the two points a and b as extrema for the bounding box, so we don't require a
@@ -21,6 +23,8 @@ public:
         x = (a[0] <= b[0]) ? interval(a[0], b[0]) : interval(b[0], a[0]);
         y = (a[1] <= b[1]) ? interval(a[1], b[1]) : interval(b[1], a[1]);
         z = (a[2] <= b[2]) ? interval(a[2], b[2]) : interval(b[2], a[2]);
+
+        pad_to_minimums();
     }
 
     aabb(const aabb& box1, const aabb& box2) {
@@ -71,6 +75,16 @@ public:
     }
 
     static const aabb empty, universe;
+
+private:
+    void pad_to_minimums() {
+        // Adjust AABB so that no side of the box is narrower than some delta.
+
+        double delta = 0.0001;
+        if (x.size() < delta) x = x.expand(delta);
+        if (y.size() < delta) y = y.expand(delta);
+        if (z.size() < delta) z = z.expand(delta);
+    }
 };
 
 const aabb aabb::empty      = aabb(interval::empty, interval::empty, interval::empty);

@@ -30,6 +30,7 @@ public:
         return (min < x && x < max);
     }
 
+    // Returns a value in range [min, max]
     [[nodiscard]] double clamp (double x) const {
         if (x < min) return min;
         if (x > max) return max;

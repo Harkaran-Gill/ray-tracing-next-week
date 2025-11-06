@@ -2,8 +2,8 @@
 
 A simple, CPU-based ray tracer built in C++ by following Peter Shirley's "Ray Tracing in One Weekend" book series. This project serves as a personal exploration into the fundamentals of computer graphics and rendering algorithms.
 
-![alt text](images/final_render.png)
-[Source](images/final_render.png) 
+![alt text](rendered_images/final_render.png)
+[Source](rendered_images/final_render.png) 
 
 ## About This Project
 

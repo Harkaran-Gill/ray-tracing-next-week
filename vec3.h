@@ -12,12 +12,12 @@ public:
     //Constructors
     // the array initialization after colon is done when you want to initialize before constructor body
     vec3() : e{0,0,0} {}
-    vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}
+    vec3(const double e0, const double e1, const double e2) : e{e0, e1, e2} {}
 
     //Below are getter functions
-    double x() const { return e[0]; }
-    double y() const { return e[1]; }
-    double z() const { return e[2]; }
+    [[nodiscard]] double x() const { return e[0]; }
+    [[nodiscard]] double y() const { return e[1]; }
+    [[nodiscard]] double z() const { return e[2]; }
 
     vec3 operator-() const {return {-e[0], -e[1], -e[2]}; }
     double operator[](int i) const { return e[i]; }
@@ -44,15 +44,15 @@ public:
         return *this;
     }
 
-    double length() const {
+    [[nodiscard]] double length() const {
         return std::sqrt(length_squared());
     }
 
-    double length_squared() const {
+    [[nodiscard]] double length_squared() const {
         return (e[0]*e[0] + e[1]*e[1] + e[2]*e[2]);
     }
 
-    bool near_zero() const {
+    [[nodiscard]] bool near_zero() const {
         // return true if near zero in all axes
         // Using std::fabs() to get absolute value
         auto s = 1e-8;
@@ -101,9 +101,9 @@ inline vec3 operator/(const vec3& u, double t) {
 }
 
 inline double dot(const vec3& u, const vec3& v) {
-    return (u.e[0] * v.e[0]
-        + u.e[1] * v.e[1]
-        + u.e[2] * v.e[2]);
+    return (u[0] * v[0]
+        + u[1] * v[1]
+        + u[2] * v[2]);
 }
 
 inline vec3 cross(const vec3& u, const vec3& v) {
