@@ -9,7 +9,7 @@ class aabb {
 public:
     interval x, y, z;
 
-    aabb() = default; // default interval is empty
+    aabb() = default; // default intervals are empty
 
     aabb(const interval& x, const interval& y, const interval& z)
         : x(x), y(y), z(z) {
