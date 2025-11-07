@@ -34,7 +34,8 @@ static void wide_angle_spheres(hittable_list &world, camera &cam) {
     cam.image_width = 800;
 
     cam.samples_per_pixel = 50;
-    cam.max_depth = 10;
+    cam.max_depth         = 10;
+    cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov = 40;
     cam.lookfrom = point3(0, 0.5, 1);
@@ -92,7 +93,8 @@ static void bouncing_spheres(hittable_list &world, camera &cam) {
     cam.image_width = 800;
 
     cam.samples_per_pixel = 50;
-    cam.max_depth = 10;
+    cam.max_depth         = 10;
+    cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov = 20;
     cam.lookfrom = point3(13, 2, 3);
@@ -118,9 +120,10 @@ static void zoomed_spheres(hittable_list &world, camera &cam) {
 
     cam.aspect_ratio = 16.0 / 9.0;
     cam.image_width = 800;
-    cam.samples_per_pixel = 50;
-    cam.max_depth = 10;
 
+    cam.samples_per_pixel = 50;
+    cam.max_depth         = 10;
+    cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov = 30;
     cam.lookfrom = point3(-2, 2, 1);
@@ -138,8 +141,10 @@ static void checkered_spheres(hittable_list &world, camera &cam) {
 
     cam.aspect_ratio = 16.0 / 9.0;
     cam.image_width = 800;
+
     cam.samples_per_pixel = 50;
-    cam.max_depth = 10;
+    cam.max_depth         = 10;
+    cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov = 20;
     cam.lookfrom = point3(13, 2, 3);
@@ -157,8 +162,10 @@ static void earth(hittable_list &world, camera &cam) {
 
     cam.aspect_ratio = 16.0 / 9.0;
     cam.image_width = 800;
+
     cam.samples_per_pixel = 100;
-    cam.max_depth = 50;
+    cam.max_depth         = 50;
+    cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov = 20;
     cam.lookfrom = point3(0, 0, 12);
@@ -175,8 +182,10 @@ static void perlin(hittable_list &world, camera &cam) {
 
     cam.aspect_ratio = 16.0 / 9.0;
     cam.image_width = 800;
+
     cam.samples_per_pixel = 100;
-    cam.max_depth = 10;
+    cam.max_depth         = 10;
+    cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov = 20;
     cam.lookfrom = point3(13, 2, 3);
@@ -203,8 +212,10 @@ static void quads(hittable_list &world, camera &cam) {
 
     cam.aspect_ratio = 16.0 / 9.0;
     cam.image_width = 800;
+
     cam.samples_per_pixel = 50;
-    cam.max_depth = 50;
+    cam.max_depth         = 50;
+    cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov = 80;
     cam.lookfrom = point3(0, 0, 9);
@@ -231,8 +242,10 @@ static void ellipses(hittable_list &world, camera &cam) {
 
     cam.aspect_ratio = 16.0 / 9.0;
     cam.image_width = 800;
+
     cam.samples_per_pixel = 50;
-    cam.max_depth = 50;
+    cam.max_depth         = 50;
+    cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov = 80;
     cam.lookfrom = point3(0, 0, 9);
@@ -241,6 +254,31 @@ static void ellipses(hittable_list &world, camera &cam) {
 
     cam.defocus_angle = 0;
 }
+
+static void simple_light(hittable_list& world, camera& cam) {
+    auto pertext = make_shared<noise_texture>(4);
+    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(pertext)));
+    world.add(make_shared<sphere>(point3(0,2,0), 2, make_shared<lambertian>(pertext)));
+
+    auto difflight = make_shared<diffuse_light>(color(4,4,4));
+    world.add(make_shared<quad>(point3(3,1,-2), vec3(2,0,0), vec3(0,2,0), difflight));
+    world.add(make_shared<sphere>(point3(0,7,0), 2, difflight));
+    // world.add(make_shared<quad>(point3(1,1,6), vec3(2,0,0), vec3(0,2,0), difflight));
+
+    cam.aspect_ratio      = 16.0 / 9.0;
+    cam.image_width       = 800;
+    cam.samples_per_pixel = 100;
+    cam.max_depth         = 50;
+    cam.background        = color(0,0,0);
+
+    cam.vfov     = 20;
+    cam.lookfrom = point3(26,3,6);
+    cam.lookat   = point3(0,2,0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+}
+
 
 int main() {
     //set the world
@@ -253,10 +291,11 @@ int main() {
     std::cout << "4: Scene-4, Checkered Spheres" << std::endl;
     std::cout << "5: Scene-5, Earth Model" << std::endl;
     std::cout << "6: Scene-6, Perlin Spheres" << std::endl;
-    std::cout << "6: Scene-7, Quadrilaterals" << std::endl;
-    std::cout << "6: Scene-6, Disks and Ellipses " << std::endl;
+    std::cout << "7: Scene-7, Quadrilaterals" << std::endl;
+    std::cout << "8: Scene-8, Disks and Ellipses " << std::endl;
+    std::cout << "9: Scene-9, A Simple light for lighting " << std::endl;
 
-    int choice = 8;
+    int choice = 9;
     if (false)
         std::cin >> choice;
     switch (choice) {
@@ -275,6 +314,8 @@ int main() {
         case 7: quads(world, cam);
             break;
         case 8: ellipses(world, cam);
+            break;
+        case 9: simple_light(world, cam);
             break;
 
         default:

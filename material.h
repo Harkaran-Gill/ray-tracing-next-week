@@ -4,12 +4,18 @@
 
 #ifndef MATERIAL_H
 #define MATERIAL_H
+#include <utility>
+
 #include "texture.h"
 
 
 class material {
 public:
     virtual ~material() = default;
+
+    virtual color emitted(double u, double v, const point3& p) {
+        return color(0,0,0);
+    }
 
     virtual bool scatter(const ray& ray_in, const hit_record& rec, color& attenuation, ray& scattered) const {
         return false;
@@ -105,6 +111,18 @@ private:
     }
 };
 
+class diffuse_light : public material {
+public:
+    explicit diffuse_light(shared_ptr<texture> tex) : tex(tex) {}
+    explicit diffuse_light(const color& emit) : tex(make_shared<solid_color>(emit)) {}
+
+    color emitted(double u, double v, const point3& p) {
+        return tex->value(u, v, p);
+    }
+
+private:
+    shared_ptr<texture> tex;
+};
 
 
 
