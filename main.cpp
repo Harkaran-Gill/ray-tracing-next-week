@@ -65,8 +65,8 @@ static void bouncing_spheres(hittable_list &world, camera &cam) {
                     // Lambertian
                     auto albedo = color::random() * color::random();
                     sphere_material = make_shared<lambertian>(albedo);
-                    auto center2 = center + point3(0, random_double(0, 0.2), 0);
-                    world.add(make_shared<sphere>(center, center2, 0.2, sphere_material));
+                    //auto center2 = center + point3(0, random_double(0, 0.2), 0);
+                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
                 } else if (choose_mat < 0.95) {
                     auto albedo = color::random() * color::random();
                     auto fuzz = random_double(0, 0.4);
@@ -92,7 +92,7 @@ static void bouncing_spheres(hittable_list &world, camera &cam) {
     cam.aspect_ratio = 16.0 / 9.0;
     cam.image_width = 800;
 
-    cam.samples_per_pixel = 50;
+    cam.samples_per_pixel = 30;
     cam.max_depth         = 10;
     cam.background        = color(0.70, 0.80, 1.00);
 
@@ -279,23 +279,61 @@ static void simple_light(hittable_list& world, camera& cam) {
     cam.defocus_angle = 0;
 }
 
+static void cornell_box(hittable_list& world, camera& cam) {
+
+    auto red   = make_shared<lambertian>(color(.65, .05, .05));
+    auto white = make_shared<lambertian>(color(.73, .73, .73));
+    auto green = make_shared<lambertian>(color(.12, .45, .15));
+    auto light = make_shared<diffuse_light>(color(15, 15, 15));
+
+    world.add(make_shared<quad>(point3(555,0,0), vec3(0,555,0), vec3(0,0,555), green));
+    world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), red));
+    world.add(make_shared<quad>(point3(343, 554, 332), vec3(-130,0,0), vec3(0,0,-105), light));
+    world.add(make_shared<quad>(point3(0,0,0), vec3(555,0,0), vec3(0,0,555), white));
+    world.add(make_shared<quad>(point3(555,555,555), vec3(-555,0,0), vec3(0,0,-555), white));
+    world.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), white));
+
+    shared_ptr<hittable> box1 = box(point3(0,0,0), point3(165,330,165), white);
+    box1 = make_shared<rotate_y>(box1, 15);
+    box1 = make_shared<translate>(box1, vec3(265,0,295));
+    world.add(box1);
+
+    shared_ptr<hittable> box2 = box(point3(0,0,0), point3(165,165,165), white);
+    box2 = make_shared<rotate_y>(box2, -18);
+    box2 = make_shared<translate>(box2, vec3(130,0,65));
+    world.add(box2);
+
+    cam.aspect_ratio      = 1.0;
+    cam.image_width       = 600;
+    cam.samples_per_pixel = 50;
+    cam.max_depth         = 50;
+    cam.background        = color(0,0,0);
+
+    cam.vfov     = 40;
+    cam.lookfrom = point3(278, 278, -800);
+    cam.lookat   = point3(278, 278, 0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+}
 
 int main() {
     //set the world
     hittable_list world;
     camera cam;
     std::cout << "Please enter the scene number to render: " << std::endl;
-    std::cout << "1: Scene-1, Simple scene with only 3 Spheres" << std::endl;
-    std::cout << "2: Scene-2, A more complex scene with more than 50 Spheres" << std::endl;
-    std::cout << "3: Scene-3, Another scene with 3 Spheres" << std::endl;
-    std::cout << "4: Scene-4, Checkered Spheres" << std::endl;
-    std::cout << "5: Scene-5, Earth Model" << std::endl;
-    std::cout << "6: Scene-6, Perlin Spheres" << std::endl;
-    std::cout << "7: Scene-7, Quadrilaterals" << std::endl;
-    std::cout << "8: Scene-8, Disks and Ellipses " << std::endl;
-    std::cout << "9: Scene-9, A Simple light for lighting " << std::endl;
+    std::cout << "01: Scene-01, Simple scene with only 3 Spheres" << std::endl;
+    std::cout << "02: Scene-02, A more complex scene with more than 50 Spheres" << std::endl;
+    std::cout << "03: Scene-03, Another scene with 3 Spheres" << std::endl;
+    std::cout << "04: Scene-04, Checkered Spheres" << std::endl;
+    std::cout << "05: Scene-05, Earth Model" << std::endl;
+    std::cout << "06: Scene-06, Perlin Spheres" << std::endl;
+    std::cout << "07: Scene-07, Quadrilaterals" << std::endl;
+    std::cout << "08: Scene-08, Disks and Ellipses " << std::endl;
+    std::cout << "09: Scene-09, A Simple light for lighting " << std::endl;
+    std::cout << "10: Scene-10, Cornell Box " << std::endl;
 
-    int choice = 9;
+    int choice = 10;
     if (false)
         std::cin >> choice;
     switch (choice) {
@@ -316,6 +354,8 @@ int main() {
         case 8: ellipses(world, cam);
             break;
         case 9: simple_light(world, cam);
+            break;
+        case 10: cornell_box(world, cam);
             break;
 
         default:

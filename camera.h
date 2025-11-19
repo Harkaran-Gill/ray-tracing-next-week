@@ -38,7 +38,7 @@ public:
         img << "P3\n" << image_width << " " << image_height << "\n255\n";
 
         for (int j = 0; j < image_height; ++j) {
-            std::cout << "\rScanLines remaining: " << image_height - j << "    " << std::flush;
+            std::cout << "\rScanLines remaining: " << image_height - j << "   " << std::flush;
             for (int i = 0; i < image_width; ++i) {
                 color pixel_color = color(0, 0, 0);
                 for (int samples = 0; samples < samples_per_pixel; ++samples) {

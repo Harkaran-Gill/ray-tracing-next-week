@@ -48,4 +48,12 @@ public:
 const interval interval::empty =    interval(+infinity, -infinity);
 const interval interval::universe = interval(+infinity, -infinity);
 
+inline interval operator+(const interval& i, double displacement) {
+    return {i.min + displacement, i.max + displacement};
+}
+
+inline interval operator+(double displacement, const interval& i) {
+    return i + displacement;
+}
+
 #endif //INTERVAL_H
